@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
+using ASP.NET_Core_Email.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace ASP.NET_Core_Email.Services
 {
@@ -10,10 +14,31 @@ namespace ASP.NET_Core_Email.Services
     // For more details see this link http://go.microsoft.com/fwlink/?LinkID=532713
     public class AuthMessageSender : IEmailSender, ISmsSender
     {
-        public Task SendEmailAsync(string email, string subject, string message)
+        private readonly EmailSettings _emailSettings;
+
+        public AuthMessageSender(IOptions<EmailSettings> emailOptions)
         {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            _emailSettings = emailOptions.Value;
+        }
+
+
+        public async Task SendEmailAsync(string email, string subject, string message)
+        {
+            using (var client = new HttpClient { BaseAddress = new Uri(_emailSettings.ApiBaseUri) })
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
+                    Convert.ToBase64String(Encoding.ASCII.GetBytes(_emailSettings.ApiKey)));
+
+                var content = new FormUrlEncodedContent(new[]
+                {
+            new KeyValuePair<string, string>("from", _emailSettings.From),
+            new KeyValuePair<string, string>("to", email),
+            new KeyValuePair<string, string>("subject", subject),
+            new KeyValuePair<string, string>("text", message)
+        });
+
+                await client.PostAsync(_emailSettings.RequestUri, content).ConfigureAwait(false);
+            }
         }
 
         public Task SendSmsAsync(string number, string message)

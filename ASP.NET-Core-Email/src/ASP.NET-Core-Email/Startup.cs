@@ -1,7 +1,6 @@
 ﻿using ASP.NET_Core_Email.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using ASP.NET_Core_Email.Data;
 using ASP.NET_Core_Email.Models;
 using ASP.NET_Core_Email.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace ASP.NET_Core_Email
 {
@@ -72,7 +72,7 @@ namespace ASP.NET_Core_Email
 
             app.UseStaticFiles();
 
-            app.UseIdentity();
+            app.UseAuthentication();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 

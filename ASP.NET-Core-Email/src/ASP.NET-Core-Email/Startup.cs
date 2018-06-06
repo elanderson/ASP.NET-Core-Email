@@ -9,6 +9,7 @@ using ASP.NET_Core_Email.Data;
 using ASP.NET_Core_Email.Models;
 using ASP.NET_Core_Email.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ASP.NET_Core_Email
 {
@@ -46,7 +47,7 @@ namespace ASP.NET_Core_Email
 
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -63,7 +64,6 @@ namespace ASP.NET_Core_Email
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-                app.UseBrowserLink();
             }
             else
             {
